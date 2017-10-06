@@ -20,7 +20,6 @@ public class MainActivity extends BaseView
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    // TODO: 2017/10/6 Q? : 全局变量还是局部变量
     // TODO: 2017/10/6  adapter
     // TODO: 2017/10/6 更新所有依赖的版本关系
 
