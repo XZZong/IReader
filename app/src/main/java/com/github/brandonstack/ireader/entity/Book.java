@@ -1,4 +1,4 @@
-package com.github.brandonstack.ireader.Entity;
+package com.github.brandonstack.ireader.entity;
 
 import org.litepal.crud.DataSupport;
 

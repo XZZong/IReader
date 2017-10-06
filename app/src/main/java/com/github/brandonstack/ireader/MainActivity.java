@@ -1,7 +1,9 @@
 package com.github.brandonstack.ireader;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -13,6 +15,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.github.brandonstack.ireader.activity.BaseView;
+import com.github.brandonstack.ireader.activity.FindBookActivity;
+import com.github.brandonstack.ireader.adapter.BookshelfAdapter;
+import com.github.brandonstack.ireader.entity.Book;
+
+import org.litepal.crud.DataSupport;
+
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -20,23 +29,43 @@ public class MainActivity extends BaseView
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    // TODO: 2017/10/6  adapter
     // TODO: 2017/10/6 更新所有依赖的版本关系
 
-    @BindView(R.id.fab) FloatingActionButton fab;
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.drawer_layout) DrawerLayout drawer;
-    @BindView(R.id.nav_view) NavigationView navigationView;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
+    @BindView(R.id.bookshelf)
+    RecyclerView mRecyclerView;
+    RecyclerView.LayoutManager mLayoutManager;
+    RecyclerView.Adapter mAdapter;
     ActionBarDrawerToggle toggle;
 
     @Override
     protected void initData() {
         setSupportActionBar(toolbar);
         toggle = new ActionBarDrawerToggle(
-                this,drawer,toolbar,
+                this, drawer, toolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close
         );
+        mRecyclerView.setHasFixedSize(true);
+        // TODO: 2017/10/6 grid layout manager : how to use
+        mLayoutManager = new LinearLayoutManager(this);
+//        mLayoutManager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
+
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        List<Book> books = DataSupport.findAll(Book.class);
+        for (Book book : books) {
+            Log.e(this.getLocalClassName(),book.getName());
+        }
+        mAdapter = new BookshelfAdapter(books);
+        mRecyclerView.setAdapter(mAdapter);
+
     }
 
     @Override
@@ -44,15 +73,15 @@ public class MainActivity extends BaseView
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v,"Replace with your own action",Snackbar.LENGTH_LONG)
-                        .setAction("Action",null).show();
+                Intent intent = new Intent(MainActivity.this, FindBookActivity.class);
+                MainActivity.this.startActivity(intent);
             }
         });
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-        Log.e(this.getLocalClassName(),"listener init finished");
+        Log.e(this.getLocalClassName(), "listener init finished");
     }
 
     @Override
@@ -60,25 +89,6 @@ public class MainActivity extends BaseView
         return R.layout.activity_main;
     }
 
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        setSupportActionBar(toolbar);
-//
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                Intent intent = new Intent(MainActivity.this,InPackageActivity.class);
-////                MainActivity.this.startActivity(intent);
-//            }
-//        });
-//
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawer.setDrawerListener(toggle);
-//        toggle.syncState();
-//
-//        navigationView.setNavigationItemSelectedListener(this);
-//    }
 
     @Override
     public void onBackPressed() {
