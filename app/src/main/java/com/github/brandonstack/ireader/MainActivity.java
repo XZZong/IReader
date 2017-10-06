@@ -1,26 +1,26 @@
 package com.github.brandonstack.ireader;
 
-import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import com.github.brandonstack.ireader.activity.BaseView;
 
-public class MainActivity extends AppCompatActivity
+import butterknife.BindView;
+
+public class MainActivity extends BaseView
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
     // TODO: 2017/10/6 Q? : 全局变量还是局部变量
-    // TODO: 2017/10/6 创建base Activity
     // TODO: 2017/10/6  adapter
     // TODO: 2017/10/6 更新所有依赖的版本关系
 
@@ -28,29 +28,58 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.drawer_layout) DrawerLayout drawer;
     @BindView(R.id.nav_view) NavigationView navigationView;
+    ActionBarDrawerToggle toggle;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+    protected void initData() {
         setSupportActionBar(toolbar);
+        toggle = new ActionBarDrawerToggle(
+                this,drawer,toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        );
+    }
 
+    @Override
+    protected void initListener() {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-//                Intent intent = new Intent(MainActivity.this,InPackageActivity.class);
-//                MainActivity.this.startActivity(intent);
+            public void onClick(View v) {
+                Snackbar.make(v,"Replace with your own action",Snackbar.LENGTH_LONG)
+                        .setAction("Action",null).show();
             }
         });
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+        Log.e(this.getLocalClassName(),"listener init finished");
     }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_main;
+    }
+
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        setSupportActionBar(toolbar);
+//
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Intent intent = new Intent(MainActivity.this,InPackageActivity.class);
+////                MainActivity.this.startActivity(intent);
+//            }
+//        });
+//
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawer.setDrawerListener(toggle);
+//        toggle.syncState();
+//
+//        navigationView.setNavigationItemSelectedListener(this);
+//    }
 
     @Override
     public void onBackPressed() {
