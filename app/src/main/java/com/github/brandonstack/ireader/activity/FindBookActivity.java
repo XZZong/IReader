@@ -29,6 +29,7 @@ public class FindBookActivity extends BaseView {
                 Book newBook = new Book();
                 String name = mEditText.getText().toString();
                 newBook.setName(name);
+                newBook.save();
                 Toast.makeText(getBaseContext(),name,Toast.LENGTH_LONG).show();
             }
         });
