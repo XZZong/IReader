@@ -2,7 +2,8 @@ package com.github.brandonstack.ireader;
 
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.util.DiffUtil;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.github.brandonstack.ireader.entity.Book;
 
 import org.litepal.crud.DataSupport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -29,7 +31,6 @@ public class MainActivity extends BaseView
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    // TODO: 2017/10/6 更新所有依赖的版本关系
 
     @BindView(R.id.fab)
     FloatingActionButton fab;
@@ -44,7 +45,9 @@ public class MainActivity extends BaseView
     RecyclerView.LayoutManager mLayoutManager;
     RecyclerView.Adapter mAdapter;
     ActionBarDrawerToggle toggle;
+    List<Book> books = new ArrayList<>();
 
+    // TODO: 2017/10/6 use DiffUtil
     @Override
     protected void initData() {
         setSupportActionBar(toolbar);
@@ -54,15 +57,11 @@ public class MainActivity extends BaseView
                 R.string.navigation_drawer_close
         );
         mRecyclerView.setHasFixedSize(true);
-        // TODO: 2017/10/6 grid layout manager : how to use
-        mLayoutManager = new LinearLayoutManager(this);
-//        mLayoutManager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
+//        mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager = new GridLayoutManager(this, 3);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
-        List<Book> books = DataSupport.findAll(Book.class);
-        for (Book book : books) {
-            Log.e(this.getLocalClassName(),book.getName());
-        }
+        books.addAll(DataSupport.findAll(Book.class));
         mAdapter = new BookshelfAdapter(books);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -81,7 +80,7 @@ public class MainActivity extends BaseView
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-        Log.e(this.getLocalClassName(), "listener init finished");
+//        Log.e(this.getLocalClassName(), "listener init finished");
     }
 
     @Override
