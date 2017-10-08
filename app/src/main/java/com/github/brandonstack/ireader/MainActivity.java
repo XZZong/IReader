@@ -2,10 +2,8 @@ package com.github.brandonstack.ireader;
 
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,12 +17,6 @@ import com.github.brandonstack.ireader.activity.BaseView;
 import com.github.brandonstack.ireader.activity.FindBookActivity;
 import com.github.brandonstack.ireader.adapter.BookShelfSourceList;
 import com.github.brandonstack.ireader.adapter.BookshelfAdapter;
-import com.github.brandonstack.ireader.entity.Book;
-
-import org.litepal.crud.DataSupport;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 

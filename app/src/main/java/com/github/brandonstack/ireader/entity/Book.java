@@ -11,8 +11,7 @@ public class Book extends DataSupport {
     private String name;
     private String type;
     private String path;
-    //    字体
-    private String charset;
+    private String folder;
 
     public void setId(int id) {
         this.id = id;
@@ -30,8 +29,8 @@ public class Book extends DataSupport {
         this.path = path;
     }
 
-    public void setCharset(String charset) {
-        this.charset = charset;
+    public void setFolder(String folder) {
+        this.folder = folder;
     }
 
     public int getId() {
@@ -50,11 +49,12 @@ public class Book extends DataSupport {
         return path;
     }
 
-    public String getCharset() {
-        return charset;
+    public String getFolder() {
+        return folder;
     }
 
-//    @Override
+
+    //    @Override
 //    public boolean equals(Object obj) {
 //        if (((Book) obj).getId() == getId())
 //            return true;
