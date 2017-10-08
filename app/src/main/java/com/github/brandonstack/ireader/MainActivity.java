@@ -17,6 +17,7 @@ import android.view.MenuItem;
 
 import com.github.brandonstack.ireader.activity.BaseView;
 import com.github.brandonstack.ireader.activity.FindBookActivity;
+import com.github.brandonstack.ireader.adapter.BookShelfSourceList;
 import com.github.brandonstack.ireader.adapter.BookshelfAdapter;
 import com.github.brandonstack.ireader.entity.Book;
 
@@ -29,7 +30,6 @@ import butterknife.BindView;
 
 public class MainActivity extends BaseView
         implements NavigationView.OnNavigationItemSelectedListener {
-
 
 
     @BindView(R.id.fab)
@@ -45,10 +45,8 @@ public class MainActivity extends BaseView
     RecyclerView.LayoutManager mLayoutManager;
     RecyclerView.Adapter mAdapter;
     ActionBarDrawerToggle toggle;
-    List<Book> books = new ArrayList<>();
+    BookShelfSourceList bookShelfSourceList;
 
-    // TODO: 2017/10/7 test FindAll Object is the same
-    // TODO: 2017/10/6 use DiffUtil
     // TODO: 2017/10/7 content provider 扫描得到所有.txt的文档
     @Override
     protected void initData() {
@@ -63,10 +61,12 @@ public class MainActivity extends BaseView
         mLayoutManager = new GridLayoutManager(this, 3);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
-        books.addAll(DataSupport.findAll(Book.class));
-        mAdapter = new BookshelfAdapter(books);
-        mRecyclerView.setAdapter(mAdapter);
 
+
+        bookShelfSourceList = BookShelfSourceList.getInstance();
+        mAdapter = new BookshelfAdapter(bookShelfSourceList.getBooks());
+        bookShelfSourceList.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -145,5 +145,11 @@ public class MainActivity extends BaseView
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bookShelfSourceList.refresh();
     }
 }

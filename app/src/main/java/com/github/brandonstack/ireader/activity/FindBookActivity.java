@@ -5,6 +5,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.github.brandonstack.ireader.adapter.BookShelfSourceList;
 import com.github.brandonstack.ireader.entity.Book;
 import com.github.brandonstack.ireader.R;
 
@@ -16,9 +17,10 @@ public class FindBookActivity extends BaseView {
     @BindView(R.id.insert_post)
     Button mButton;
 
+    BookShelfSourceList bookShelfSourceList;
     @Override
     protected void initData() {
-
+        bookShelfSourceList = BookShelfSourceList.getInstance();
     }
 
     @Override
@@ -29,7 +31,7 @@ public class FindBookActivity extends BaseView {
                 Book newBook = new Book();
                 String name = mEditText.getText().toString();
                 newBook.setName(name);
-                newBook.save();
+                bookShelfSourceList.add(newBook);
                 Toast.makeText(getBaseContext(),name,Toast.LENGTH_LONG).show();
             }
         });

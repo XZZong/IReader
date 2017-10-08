@@ -53,4 +53,11 @@ public class Book extends DataSupport {
     public String getCharset() {
         return charset;
     }
+
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (((Book) obj).getId() == getId())
+//            return true;
+//        return false;
+//    }
 }
