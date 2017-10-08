@@ -47,7 +47,9 @@ public class MainActivity extends BaseView
     ActionBarDrawerToggle toggle;
     List<Book> books = new ArrayList<>();
 
+    // TODO: 2017/10/7 test FindAll Object is the same
     // TODO: 2017/10/6 use DiffUtil
+    // TODO: 2017/10/7 content provider 扫描得到所有.txt的文档
     @Override
     protected void initData() {
         setSupportActionBar(toolbar);
