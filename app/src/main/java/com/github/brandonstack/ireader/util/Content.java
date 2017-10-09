@@ -16,6 +16,8 @@ import java.util.List;
  */
 
 public class Content {
+    private final static String[] FILETYPES = new String[]{"%.txt"};
+
     Context context;
     List<Book> books;
 
@@ -24,7 +26,7 @@ public class Content {
         books = new ArrayList<>();
     }
 
-    public void queryFiles(String[] fileTypes) {
+    public List<Book> queryFiles() {
         String[] projection = new String[]{
                 MediaStore.Files.FileColumns.DATA
         };
@@ -34,15 +36,13 @@ public class Content {
                 Uri.parse("content://media/external/file"),
                 projection,
                 MediaStore.Files.FileColumns.DATA + " like ?",
-                fileTypes,
+                FILETYPES,
                 null
         );
 
         //get contents
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                int idIndex = cursor
-                        .getColumnIndex(MediaStore.Files.FileColumns._ID);
                 int dataIndex = cursor
                         .getColumnIndex(MediaStore.Files.FileColumns.DATA);
                 do {
@@ -56,11 +56,13 @@ public class Content {
                     book.setFolder(folder);
                     book.setPath(path);
                     book.setType(name.substring(dot + 1));
+                    books.add(book);
                     Log.e(this.getClass().getSimpleName()
-                    ,name);
-                }while (cursor.moveToFirst());
+                    ,path);
+                }while (cursor.moveToNext());
             }
         }
         cursor.close();
+        return books;
     }
 }

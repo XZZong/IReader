@@ -1,9 +1,13 @@
 package com.github.brandonstack.ireader;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,6 +21,10 @@ import com.github.brandonstack.ireader.activity.BaseView;
 import com.github.brandonstack.ireader.activity.FindBookActivity;
 import com.github.brandonstack.ireader.adapter.BookShelfSourceList;
 import com.github.brandonstack.ireader.adapter.BookshelfAdapter;
+import com.github.brandonstack.ireader.entity.Book;
+import com.github.brandonstack.ireader.util.Content;
+
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -38,6 +46,8 @@ public class MainActivity extends BaseView
     RecyclerView.Adapter mAdapter;
     ActionBarDrawerToggle toggle;
     BookShelfSourceList bookShelfSourceList;
+    ProgressDialog mProgressDialog;
+    private static final int READERFILES = 1;
 
     // TODO: 2017/10/7 content provider 扫描得到所有.txt的文档
     @Override
@@ -66,8 +76,24 @@ public class MainActivity extends BaseView
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, FindBookActivity.class);
-                MainActivity.this.startActivity(intent);
+//                Intent intent = new Intent(MainActivity.this, FindBookActivity.class);
+//                MainActivity.this.startActivity(intent);
+                mProgressDialog = ProgressDialog.show(
+                        MainActivity.this,
+                        "",
+                        "Loding"
+                );
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Content content = new Content(MainActivity.this);
+                        List<Book> books = content.queryFiles();
+                        Message msg = Message.obtain();
+                        msg.obj = books;
+                        msg.what = READERFILES;
+                        handler.sendMessage(msg);
+                    }
+                }).start();
             }
         });
         drawer.setDrawerListener(toggle);
@@ -76,6 +102,16 @@ public class MainActivity extends BaseView
         navigationView.setNavigationItemSelectedListener(this);
 //        Log.e(this.getLocalClassName(), "listener init finished");
     }
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            List<Book> books = ((List<Book>) msg.obj);
+            for (Book book : books) {
+                Log.e(this.getClass().getSimpleName(), book.getName());
+            }
+        }
+    };
 
     @Override
     protected int getLayout() {
@@ -90,6 +126,13 @@ public class MainActivity extends BaseView
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mProgressDialog != null && mProgressDialog.isShowing())
+            mProgressDialog.dismiss();
     }
 
     @Override
