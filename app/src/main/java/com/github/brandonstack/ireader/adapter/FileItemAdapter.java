@@ -22,8 +22,6 @@ import butterknife.ButterKnife;
 
 public class FileItemAdapter extends RecyclerView.Adapter<FileItemAdapter.MyViewHolder> {
     private List<Book> books;
-    @BindView(R.id.tv_folder_name)
-    private TextView mTextView;
 
     public FileItemAdapter(List<Book> books) {
         this.books = books;
@@ -46,10 +44,8 @@ public class FileItemAdapter extends RecyclerView.Adapter<FileItemAdapter.MyView
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        MyViewHolder mViewHolder = new MyViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.scan_files, parent, false));
-        mTextView.setText(books.get(0).getFolder());
-        return mViewHolder;
+        return new MyViewHolder(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.file_item, parent, false));
     }
 
     @Override
