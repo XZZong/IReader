@@ -1,9 +1,9 @@
 package com.github.brandonstack.ireader;
 
-import android.app.ProgressDialog;
-import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,9 +16,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.github.brandonstack.ireader.activity.BaseView;
-import com.github.brandonstack.ireader.activity.FindBookActivity;
 import com.github.brandonstack.ireader.adapter.BookShelfSourceList;
 import com.github.brandonstack.ireader.adapter.BookshelfAdapter;
 import com.github.brandonstack.ireader.entity.Book;
@@ -31,6 +31,7 @@ import butterknife.BindView;
 public class MainActivity extends BaseView
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final int READ_EXTERNAL_REQUEST_CODE = 10;
 
     @BindView(R.id.fab)
     FloatingActionButton fab;
@@ -46,10 +47,8 @@ public class MainActivity extends BaseView
     RecyclerView.Adapter mAdapter;
     ActionBarDrawerToggle toggle;
     BookShelfSourceList bookShelfSourceList;
-    ProgressDialog mProgressDialog;
     private static final int READERFILES = 1;
 
-    // TODO: 2017/10/7 content provider 扫描得到所有.txt的文档
     @Override
     protected void initData() {
         setSupportActionBar(toolbar);
@@ -78,22 +77,8 @@ public class MainActivity extends BaseView
             public void onClick(View v) {
 //                Intent intent = new Intent(MainActivity.this, FindBookActivity.class);
 //                MainActivity.this.startActivity(intent);
-                mProgressDialog = ProgressDialog.show(
-                        MainActivity.this,
-                        "",
-                        "Loding"
-                );
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Content content = new Content(MainActivity.this);
-                        List<Book> books = content.queryFiles();
-                        Message msg = Message.obtain();
-                        msg.obj = books;
-                        msg.what = READERFILES;
-                        handler.sendMessage(msg);
-                    }
-                }).start();
+                //检查权限，如果有权限进行相应操作
+                checkPermission(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE, READ_EXTERNAL_REQUEST_CODE, "需要扫描储存卡的权限");
             }
         });
         drawer.setDrawerListener(toggle);
@@ -103,13 +88,29 @@ public class MainActivity extends BaseView
 //        Log.e(this.getLocalClassName(), "listener init finished");
     }
 
+    private void scanFiles() {
+        showProgress(true, "Loading");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Content content = new Content(MainActivity.this);
+                List<Book> books = content.queryFiles();
+                Message msg = Message.obtain();
+                msg.obj = books;
+                msg.what = READERFILES;
+                handler.sendMessage(msg);
+            }
+        }).start();
+    }
+
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             List<Book> books = ((List<Book>) msg.obj);
             for (Book book : books) {
-                Log.e(this.getClass().getSimpleName(), book.getName());
+                Log.e(MainActivity.this.getClass().getSimpleName(), book.getName());
             }
+            hideProgress();
         }
     };
 
@@ -131,8 +132,7 @@ public class MainActivity extends BaseView
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mProgressDialog != null && mProgressDialog.isShowing())
-            mProgressDialog.dismiss();
+        hideProgress();
     }
 
     @Override
@@ -186,5 +186,29 @@ public class MainActivity extends BaseView
     protected void onStart() {
         super.onStart();
         bookShelfSourceList.refresh();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case READ_EXTERNAL_REQUEST_CODE: {
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    havePermission(READ_EXTERNAL_REQUEST_CODE);
+                } else {
+                    Toast.makeText(this, "Permission Rejected", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void havePermission(int requestCode) {
+        switch (requestCode) {
+            case READ_EXTERNAL_REQUEST_CODE: {
+                scanFiles();
+            }
+        }
     }
 }

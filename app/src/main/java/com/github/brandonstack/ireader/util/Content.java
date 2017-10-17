@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 public class Content {
-    private final static String[] FILETYPES = new String[]{"%.txt"};
+    private final static String[] FILETYPES = new String[]{"txt"};
 
     Context context;
     List<Book> books;
@@ -35,9 +35,10 @@ public class Content {
         Cursor cursor = context.getContentResolver().query(
                 Uri.parse("content://media/external/file"),
                 projection,
-                MediaStore.Files.FileColumns.DATA + " like ?",
-                FILETYPES,
+                MediaStore.Files.FileColumns.DATA + " like '%txt'",
+                null,
                 null
+
         );
 
         //get contents
@@ -58,11 +59,11 @@ public class Content {
                     book.setType(name.substring(dot + 1));
                     books.add(book);
                     Log.e(this.getClass().getSimpleName()
-                    ,path);
-                }while (cursor.moveToNext());
+                            , path);
+                } while (cursor.moveToNext());
             }
+            cursor.close();
         }
-        cursor.close();
         return books;
     }
 }

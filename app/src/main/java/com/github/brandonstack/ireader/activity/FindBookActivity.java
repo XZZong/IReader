@@ -41,4 +41,9 @@ public class FindBookActivity extends BaseView {
     protected int getLayout() {
         return R.layout.activity_find_book;
     }
+
+    @Override
+    protected void havePermission(int requestCode) {
+
+    }
 }
