@@ -35,6 +35,7 @@ public class Content {
         Cursor cursor = context.getContentResolver().query(
                 Uri.parse("content://media/external/file"),
                 projection,
+                // TODO: 2017/10/17 重构这里这个文档
                 MediaStore.Files.FileColumns.DATA + " like '%txt'",
                 null,
                 null

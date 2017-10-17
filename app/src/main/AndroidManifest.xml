@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.brandonstack.ireader">
 
-    <!--<uses-permission android:name="android.permission.READ_USER_DICTIONARY"/>-->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- <uses-permission android:name="android.permission.READ_USER_DICTIONARY"/> -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -22,7 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.FindBookActivity"></activity>
+        <activity android:name=".activity.FindBookActivity" />
+        <activity android:name=".activity.ScanActivity"></activity>
     </application>
 
 </manifest>
