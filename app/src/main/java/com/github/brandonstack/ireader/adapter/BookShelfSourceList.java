@@ -34,8 +34,9 @@ public class BookShelfSourceList {
     }
 
     public boolean contains(Book book) {
-        return indexOf(book.getId()) != -1;
+        return indexOf(book.getPath()) != -1 || indexOf(book.getId()) != -1;
     }
+
 
     public void setAdapter(RecyclerView.Adapter adapter) {
         this.adapter = adapter;
@@ -76,6 +77,14 @@ public class BookShelfSourceList {
             changed = true;
         } else
             throw new RuntimeException("No record with id " + id);
+    }
+
+    private int indexOf(String path) {
+        for (int i = 0; i < books.size(); i++) {
+            if (books.get(i).getPath().equals(path))
+                return i;
+        }
+        return -1;
     }
 
     private int indexOf(long id) {

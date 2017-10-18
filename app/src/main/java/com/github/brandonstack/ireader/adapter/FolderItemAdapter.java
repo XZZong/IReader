@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.github.brandonstack.ireader.R;
@@ -37,10 +38,18 @@ public class FolderItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      * onBindViewHolder
      */
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         int type = holder.getItemViewType();
         if (type == ITEM_TYPE.ITEM_FILE.ordinal()) {
             ((FileViewHolder) holder).mCheckBox.setText(books.get(position).getName());
+            ((FileViewHolder) holder).mCheckBox
+                    .setOnCheckedChangeListener(
+                            new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    list.check(position,isChecked);
+                }
+            });
         } else {
             ((FolderViewHolder) holder).mTextView.setText(books.get(position).getFolder());
         }
@@ -97,5 +106,9 @@ public class FolderItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public int getItemCount() {
         return books == null ? 0 : books.size();
+    }
+
+    public void addToBookShelf(){
+        list.addToBookShelf();
     }
 }

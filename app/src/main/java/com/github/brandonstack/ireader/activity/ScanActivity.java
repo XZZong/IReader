@@ -136,7 +136,8 @@ public class ScanActivity extends BaseView {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_ok:
-                Toast.makeText(this, "" + R.id.home, Toast.LENGTH_SHORT).show();
+                ((FolderItemAdapter) adapterFolder).addToBookShelf();
+                onBackPressed();
                 break;
             case R.id.home:
                 onBackPressed();
