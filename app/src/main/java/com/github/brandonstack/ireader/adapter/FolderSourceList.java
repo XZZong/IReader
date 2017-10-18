@@ -3,7 +3,6 @@ package com.github.brandonstack.ireader.adapter;
 import com.github.brandonstack.ireader.entity.Book;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +13,14 @@ import java.util.Map;
 
 public class FolderSourceList {
     private Map<String, List<Book>> lib;
+    private List<Book> books;
     private static FolderSourceList list;
     private static BookShelfSourceList shelfList;
 
     private FolderSourceList() {
         lib = new LinkedHashMap<>();
         shelfList = BookShelfSourceList.getInstance();
+        books = new ArrayList<>();
     }
 
     //一个工厂方法
@@ -38,14 +39,31 @@ public class FolderSourceList {
         //列表中是否存在
         if (!shelfList.contains(book)) {
             //如果列表不存在
-            if (!lib.containsKey(book.getPath()))
-                lib.put(book.getPath(), new ArrayList<Book>());
-            lib.get(book.getPath()).add(book);
+            if (!lib.containsKey(book.getFolder()))
+                lib.put(book.getFolder(), new ArrayList<Book>());
+            lib.get(book.getFolder()).add(book);
         }
     }
+
     /**
      * 返回adapter函数的数据源
      * 使用场景仅仅一种，分类完成之后就不需要index，所以可以加入结束信号，然后将转为index，完成构建活动？
      * 后面继续讨论
      */
+    public void convert() {
+        for (Map.Entry<String, List<Book>> entry : lib.entrySet()) {
+            books.add(setBook(entry.getKey()));
+            books.addAll(entry.getValue());
+        }
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    private Book setBook(String folder) {
+        Book book = new Book();
+        book.setFolder(folder);
+        return book;
+    }
 }

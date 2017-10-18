@@ -48,7 +48,9 @@ public abstract class BaseView extends AppCompatActivity {
 
     protected abstract void initData();
 
-    protected abstract void initListener();
+    protected void initListener() {
+
+    }
 
     protected abstract int getLayout();
 
@@ -71,5 +73,7 @@ public abstract class BaseView extends AppCompatActivity {
         }
     }
 
-    protected abstract void havePermission(int requestCode);
+    protected void havePermission(int requestCode) {
+
+    }
 }
