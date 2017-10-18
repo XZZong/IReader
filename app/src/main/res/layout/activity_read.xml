@@ -3,8 +3,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.github.brandonstack.ireader.view.PageWidget
+    <EditText
         android:id="@+id/bookPage"
+        android:inputType="textMultiLine"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </RelativeLayout>

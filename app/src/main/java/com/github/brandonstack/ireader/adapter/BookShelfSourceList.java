@@ -1,18 +1,20 @@
 package com.github.brandonstack.ireader.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.github.brandonstack.ireader.entity.Book;
 
 import org.litepal.crud.DataSupport;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by 22693 on 2017/10/8.
  */
 
-public class BookShelfSourceList {
+public class BookShelfSourceList implements ItemTouchHelperAdapter {
     private boolean changed;
     private List<Book> books;
     private static BookShelfSourceList list;
@@ -20,7 +22,9 @@ public class BookShelfSourceList {
 
     private BookShelfSourceList() {
         changed = false;
-        books = DataSupport.findAll(Book.class);
+        //按照order进行排序
+        books = DataSupport.order("order").find(Book.class);
+//        books = DataSupport.findAll(Book.class);
     }
 
     public List<Book> getBooks() {
@@ -51,6 +55,7 @@ public class BookShelfSourceList {
     }
 
     public void add(Book book) {
+        book.setOrder(books.size());
         book.save();
         books.add(book);
         changed = true;
@@ -100,5 +105,13 @@ public class BookShelfSourceList {
             adapter.notifyDataSetChanged();
             changed = false;
         }
+    }
+
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        books.get(fromPosition).setOrder(toPosition);
+        books.get(fromPosition).save();
+        Collections.swap(books, fromPosition, toPosition);
+        adapter.notifyItemMoved(fromPosition, toPosition);
     }
 }

@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.brandonstack.ireader">
 
-    <!--<uses-permission android:name="android.permission.READ_USER_DICTIONARY"/>-->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <application
         android:name=".MyApplication"
@@ -21,10 +20,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ScanActivity" />
-        <activity
-            android:name=".ReadActivity"
-            android:label="@string/app_name" />
+
+        <activity android:name=".activity.ScanActivity"/>
+        <activity android:name=".activity.ReadActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

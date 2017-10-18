@@ -2,17 +2,28 @@ package com.github.brandonstack.ireader.entity;
 
 import org.litepal.crud.DataSupport;
 
+import java.io.Serializable;
+
 /**
  * Created by 22693 on 2017/10/6.
  */
 
-public class Book extends DataSupport {
+public class Book extends DataSupport implements Serializable {
     private int id;
     private String name;
     private String type;
     private String path;
     private String folder;
+    private int order;
     private long begin;
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
     public long getBegin() {
         return begin;
@@ -61,12 +72,4 @@ public class Book extends DataSupport {
     public String getFolder() {
         return folder;
     }
-
-
-    //    @Override
-//    public boolean equals(Object obj) {
-//        if (((Book) obj).getId() == getId())
-//            return true;
-//        return false;
-//    }
 }

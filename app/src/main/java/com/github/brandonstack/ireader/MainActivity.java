@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,8 @@ import com.github.brandonstack.ireader.activity.BaseView;
 import com.github.brandonstack.ireader.activity.ScanActivity;
 import com.github.brandonstack.ireader.adapter.BookShelfSourceList;
 import com.github.brandonstack.ireader.adapter.BookshelfAdapter;
+import com.github.brandonstack.ireader.adapter.SimpleShelfTouchHelperCallback;
+import com.github.brandonstack.ireader.entity.Book;
 
 import butterknife.BindView;
 
@@ -25,8 +28,6 @@ public class MainActivity extends BaseView
 
     @BindView(R.id.fab)
     FloatingActionButton fab;
-    @BindView(R.id.fab1)
-    FloatingActionButton fab1;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.drawer_layout)
@@ -56,9 +57,15 @@ public class MainActivity extends BaseView
 
 
         bookShelfSourceList = BookShelfSourceList.getInstance();
-        mAdapter = new BookshelfAdapter(bookShelfSourceList.getBooks());
+        mAdapter = new BookshelfAdapter(bookShelfSourceList.getBooks(), MainActivity.this);
         bookShelfSourceList.setAdapter(mAdapter);
         mRecyclerView.setAdapter(mAdapter);
+
+        //移动
+        ItemTouchHelper.Callback callback =
+                new SimpleShelfTouchHelperCallback(bookShelfSourceList);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     @Override
@@ -68,19 +75,10 @@ public class MainActivity extends BaseView
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ScanActivity.class);
                 MainActivity.this.startActivity(intent);
-
             }
         });
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
-        fab1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ReadActivity.class);
-                MainActivity.this.startActivity(intent);
-            }
-        });
 
         navigationView.setNavigationItemSelectedListener(this);
 //        Log.e(this.getLocalClassName(), "listener init finished");

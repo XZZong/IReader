@@ -3,17 +3,26 @@ package com.github.brandonstack.ireader.util;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
+import android.widget.EditText;
 
 import com.github.brandonstack.ireader.R;
-import com.github.brandonstack.ireader.view.PageWidget;
+import com.github.brandonstack.ireader.entity.Book;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
 
 /**
  * Created by admin on 2017/10/18.
  */
 
 public class Page {
+    @BindView(R.id.bookPage)
+    EditText editText;
+
     private static Page page;
-    private PageWidget mBookPageWidget;
     private boolean mIsFirstPage;  //当前页是否为第一页
     private boolean mIsLastPage;   //当前页是否为最后一页
     private int mWidth;     //页面宽度
@@ -49,5 +58,24 @@ public class Page {
 
         mVisibleWidth = mWidth - 2 * marginWidth;
         mVisibleHeight = mHeight - 2 * marginHeight;
+
+        editText.setLineSpacing(0,1.5f);
+        mFontSize = editText.getTextSize();
+        lineSpace = editText.getLineSpacingMultiplier();
+    }
+
+    public List<String> getPageFromBegin(Book book) {
+        long begin = book.getBegin();
+        if (begin <= 0) {
+            mIsFirstPage = true;
+            begin = 0;
+        }
+        List<String> list = new ArrayList<>();
+        return list;
+    }
+
+    private long bookSize(Book book) {
+        File file = new File(book.getPath());
+        return file.length();
     }
 }
