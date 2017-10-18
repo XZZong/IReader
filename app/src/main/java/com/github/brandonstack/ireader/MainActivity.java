@@ -31,9 +31,10 @@ import butterknife.BindView;
 public class MainActivity extends BaseView
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    @BindView(R.id.fab1)
+    FloatingActionButton fab1;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.drawer_layout)
@@ -98,6 +99,14 @@ public class MainActivity extends BaseView
         });
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+        fab1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ReadActivity.class);
+                MainActivity.this.startActivity(intent);
+            }
+        });
 
         navigationView.setNavigationItemSelectedListener(this);
 //        Log.e(this.getLocalClassName(), "listener init finished");

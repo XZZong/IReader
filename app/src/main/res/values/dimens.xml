@@ -7,4 +7,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="grid_hor_spacing">10dp</dimen>
     <dimen name="grid_ver_spacing">10dp</dimen>
+    
+    <dimen name="readingMarginWidth">15dp</dimen>
+    <dimen name="readingMarginHeight">30dp</dimen>
 </resources>

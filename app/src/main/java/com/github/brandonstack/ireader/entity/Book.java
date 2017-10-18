@@ -12,6 +12,15 @@ public class Book extends DataSupport {
     private String type;
     private String path;
     private String folder;
+    private long begin;
+
+    public long getBegin() {
+        return begin;
+    }
+
+    public void setBegin(long begin) {
+        this.begin = begin;
+    }
 
     public void setId(int id) {
         this.id = id;
