@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.github.brandonstack.ireader.activity.BaseView;
 import com.github.brandonstack.ireader.activity.ScanActivity;
 import com.github.brandonstack.ireader.adapter.BookShelfSourceList;
 import com.github.brandonstack.ireader.adapter.BookshelfAdapter;
+import com.github.brandonstack.ireader.adapter.SimpleShelfTouchHelperCallback;
 import com.github.brandonstack.ireader.entity.Book;
 
 import butterknife.BindView;
@@ -55,9 +57,15 @@ public class MainActivity extends BaseView
 
 
         bookShelfSourceList = BookShelfSourceList.getInstance();
-        mAdapter = new BookshelfAdapter(bookShelfSourceList.getBooks(),MainActivity.this);
+        mAdapter = new BookshelfAdapter(bookShelfSourceList.getBooks(), MainActivity.this);
         bookShelfSourceList.setAdapter(mAdapter);
         mRecyclerView.setAdapter(mAdapter);
+
+        //移动
+        ItemTouchHelper.Callback callback =
+                new SimpleShelfTouchHelperCallback(bookShelfSourceList);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     @Override
@@ -149,10 +157,5 @@ public class MainActivity extends BaseView
     protected void onStart() {
         super.onStart();
         bookShelfSourceList.refresh();
-    }
-
-
-    @Override
-    protected void havePermission(int requestCode) {
     }
 }
