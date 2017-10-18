@@ -3,9 +3,11 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <EditText
+    <TextView
         android:id="@+id/bookPage"
         android:inputType="textMultiLine"
+        android:layout_marginLeft="@dimen/readingMarginWidth"
+        android:layout_marginTop="@dimen/readingMarginHeight"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </RelativeLayout>

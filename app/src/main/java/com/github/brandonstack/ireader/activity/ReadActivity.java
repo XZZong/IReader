@@ -3,11 +3,10 @@ package com.github.brandonstack.ireader.activity;
 import android.content.Intent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.brandonstack.ireader.R;
-import com.github.brandonstack.ireader.activity.BaseView;
 import com.github.brandonstack.ireader.entity.Book;
 import com.github.brandonstack.ireader.util.Page;
 
@@ -21,7 +20,7 @@ import butterknife.BindView;
 
 public class ReadActivity extends BaseView {
     @BindView(R.id.bookPage)
-    EditText editText;
+    TextView textView;
 
     private int mScreenWidth = 0; // 屏幕宽
     private int mScreenHeight = 0; // 屏幕高
@@ -39,13 +38,13 @@ public class ReadActivity extends BaseView {
 
     @Override
     protected void initData() {
-        page = Page.getInstance();
+        page = Page.getInstance(this, textView);
         //保持屏幕常亮
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Intent intent = getIntent();
         book = (Book) intent.getSerializableExtra("book");
-        List<String> list = page.getPageFromBegin(book);
-        editText.setText(list.get(0));
+        String show = page.getPageFromBegin(book);
+        textView.setText(show);
     }
 
     @Override
@@ -53,16 +52,18 @@ public class ReadActivity extends BaseView {
         setTouchListener(new TouchListener() {
             @Override
             public void center() {
-
+                Toast.makeText(ReadActivity.this,"center show setting",Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public Boolean prePage() {
+                Toast.makeText(ReadActivity.this,"pre page",Toast.LENGTH_SHORT).show();
                 return true;
             }
 
             @Override
             public Boolean nextPage() {
+                Toast.makeText(ReadActivity.this,"next page",Toast.LENGTH_SHORT).show();
                 return true;
             }
 
