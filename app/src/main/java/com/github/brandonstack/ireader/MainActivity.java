@@ -65,7 +65,6 @@ public class MainActivity extends BaseView
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, FindBookActivity.class);
                 Intent intent = new Intent(MainActivity.this, ScanActivity.class);
                 MainActivity.this.startActivity(intent);
 
