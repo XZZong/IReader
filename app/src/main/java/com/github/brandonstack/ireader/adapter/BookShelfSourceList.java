@@ -33,6 +33,11 @@ public class BookShelfSourceList {
         return list;
     }
 
+    public boolean contains(Book book) {
+        return indexOf(book.getPath()) != -1 || indexOf(book.getId()) != -1;
+    }
+
+
     public void setAdapter(RecyclerView.Adapter adapter) {
         this.adapter = adapter;
     }
@@ -65,18 +70,33 @@ public class BookShelfSourceList {
     }
 
     public void delete(long id) {
-        for (int i = 0; i < books.size(); i++) {
-            if (books.get(i).getId() == id) {
-                DataSupport.delete(Book.class, id);
-                books.remove(i);
-                changed = true;
-                break;
-            }
-        }
-        throw new RuntimeException("No record with id " + id);
+        int index = indexOf(id);
+        if (index != -1) {
+            DataSupport.delete(Book.class, id);
+            books.remove(index);
+            changed = true;
+        } else
+            throw new RuntimeException("No record with id " + id);
     }
-    public void refresh(){
-        if (changed){
+
+    private int indexOf(String path) {
+        for (int i = 0; i < books.size(); i++) {
+            if (books.get(i).getPath().equals(path))
+                return i;
+        }
+        return -1;
+    }
+
+    private int indexOf(long id) {
+        for (int i = 0; i < books.size(); i++) {
+            if (books.get(i).getId() == id)
+                return i;
+        }
+        return -1;
+    }
+
+    public void refresh() {
+        if (changed) {
             adapter.notifyDataSetChanged();
             changed = false;
         }

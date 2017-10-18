@@ -44,6 +44,7 @@ public class BookshelfAdapter extends RecyclerView.Adapter<BookshelfAdapter.View
     public BookshelfAdapter(List<Book> books) {
         this.books = books;
     }
+    // TODO: 2017/10/17 这个抽象的还不是很合理，正确的应该getlist也去掉，直接从内部得到，这样相当于数据直接暴露
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
