@@ -1,19 +1,27 @@
-package com.github.brandonstack.ireader.view;
+package com.github.brandonstack.ireader.activity;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.util.AttributeSet;
-import android.util.DisplayMetrics;
+import android.content.Intent;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.github.brandonstack.ireader.R;
+import com.github.brandonstack.ireader.activity.BaseView;
+import com.github.brandonstack.ireader.entity.Book;
+import com.github.brandonstack.ireader.util.Page;
+
+import java.util.List;
+
+import butterknife.BindView;
 
 /**
- * Created by admin on 2017/10/18.
+ * Created by admin on 2017/10/17.
  */
 
-public class PageWidget extends View {
-    private Context mContext;
+public class ReadActivity extends BaseView {
+    @BindView(R.id.bookPage)
+    EditText editText;
 
     private int mScreenWidth = 0; // 屏幕宽
     private int mScreenHeight = 0; // 屏幕高
@@ -25,33 +33,49 @@ public class PageWidget extends View {
     private Boolean isNext = false;       //是否翻到下一页
     private Boolean noNext = false;       //是否没下一页或者上一页
 
-    Bitmap mCurPageBitmap = null; // 当前页
-    Bitmap mNextPageBitmap = null;
-
+    private Page page;
     private TouchListener mTouchListener;
+    private Book book;
 
-    public PageWidget(Context context) {
-        this(context, null);
+    @Override
+    protected void initData() {
+        page = Page.getInstance();
+        //保持屏幕常亮
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        Intent intent = getIntent();
+        book = (Book) intent.getSerializableExtra("book");
+        List<String> list = page.getPageFromBegin(book);
+        editText.setText(list.get(0));
     }
 
-    public PageWidget(Context context, AttributeSet set) {
-        this(context, set, 0);
+    @Override
+    protected void initListener() {
+        setTouchListener(new TouchListener() {
+            @Override
+            public void center() {
+
+            }
+
+            @Override
+            public Boolean prePage() {
+                return true;
+            }
+
+            @Override
+            public Boolean nextPage() {
+                return true;
+            }
+
+            @Override
+            public void cancel() {
+
+            }
+        });
     }
 
-    public PageWidget(Context context, AttributeSet set, int defStyleAttr) {
-        super(context,set,defStyleAttr);
-        mContext = context;
-        initPage();
-    }
-
-    private void initPage() {
-        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics metric = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(metric);
-        mScreenWidth = metric.widthPixels;
-        mScreenHeight = metric.heightPixels;
-        mCurPageBitmap = Bitmap.createBitmap(mScreenWidth, mScreenHeight, Bitmap.Config.RGB_565);      //android:LargeHeap=true  use in  manifest application
-        mNextPageBitmap = Bitmap.createBitmap(mScreenWidth, mScreenHeight, Bitmap.Config.RGB_565);
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_read;
     }
 
     @Override
