@@ -1,7 +1,10 @@
 package com.github.brandonstack.ireader.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -10,6 +13,7 @@ import com.github.brandonstack.ireader.R;
 import com.github.brandonstack.ireader.entity.Book;
 import com.github.brandonstack.ireader.util.Page;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
@@ -30,7 +34,6 @@ public class ReadActivity extends BaseView {
     private int moveY = 0;
     private Boolean isMove = false;       //是否移动了
     private Boolean isNext = false;       //是否翻到下一页
-    private Boolean noNext = false;       //是否没下一页或者上一页
 
     private Page page;
     private TouchListener mTouchListener;
@@ -38,6 +41,13 @@ public class ReadActivity extends BaseView {
 
     @Override
     protected void initData() {
+        //获取屏幕宽高
+        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics metric = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(metric);
+        mScreenWidth = metric.widthPixels;
+        mScreenHeight = metric.heightPixels;
+
         page = Page.getInstance(this, textView);
         //保持屏幕常亮
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -49,21 +59,31 @@ public class ReadActivity extends BaseView {
 
     @Override
     protected void initListener() {
-        setTouchListener(new TouchListener() {
+        mTouchListener = new TouchListener() {
             @Override
             public void center() {
-                Toast.makeText(ReadActivity.this,"center show setting",Toast.LENGTH_SHORT).show();
+                Toast.makeText(ReadActivity.this,"center setting", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public Boolean prePage() {
-                Toast.makeText(ReadActivity.this,"pre page",Toast.LENGTH_SHORT).show();
+                if (book.getBegin() <= 0) {
+                    Toast.makeText(ReadActivity.this,"当前页已是第一页",Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                String show = page.getPrePage(book);
+                textView.setText(show);
                 return true;
             }
 
             @Override
             public Boolean nextPage() {
-                Toast.makeText(ReadActivity.this,"next page",Toast.LENGTH_SHORT).show();
+                if (page.ismIsLastPage()) {
+                    Toast.makeText(ReadActivity.this,"当前页已是最后一页",Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                String show = page.getNextPage(book);
+                textView.setText(show);
                 return true;
             }
 
@@ -71,7 +91,7 @@ public class ReadActivity extends BaseView {
             public void cancel() {
 
             }
-        });
+        };
     }
 
     @Override
@@ -90,8 +110,10 @@ public class ReadActivity extends BaseView {
             moveX = 0;
             moveY = 0;
             isMove = false;
-            noNext = false;
             isNext = false;
+        }
+        else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            isMove = true;
         }
         else if (event.getAction() == MotionEvent.ACTION_UP) {
             if (!isMove) {
@@ -122,10 +144,6 @@ public class ReadActivity extends BaseView {
             }
         }
         return true;
-    }
-
-    public void setTouchListener(TouchListener touchListener) {
-        this.mTouchListener = touchListener;
     }
 
     public interface TouchListener{
