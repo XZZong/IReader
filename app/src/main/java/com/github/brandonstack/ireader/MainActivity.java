@@ -160,9 +160,4 @@ public class MainActivity extends BaseView
         super.onStart();
         bookShelfSourceList.refresh();
     }
-
-
-    @Override
-    protected void havePermission(int requestCode) {
-    }
 }
