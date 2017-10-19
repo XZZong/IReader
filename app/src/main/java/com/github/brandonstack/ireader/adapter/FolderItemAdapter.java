@@ -41,7 +41,7 @@ public class FolderItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      * 是否选中
      */
     private boolean[] checked;
-    private BookshelfAdapter bookshelfAdapter;
+    IndexSourceList list;
 
     /**
      * 添加书本函数
@@ -50,7 +50,7 @@ public class FolderItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      */
     public void add(Book book) {
         //列表中是否存在
-        if (!bookshelfAdapter.isPathExist(book)) {
+        if (!list.isPathExist(book)) {
             //如果列表不存在
             if (!lib.containsKey(book.getFolder()))
                 lib.put(book.getFolder(), new ArrayList<Book>());
@@ -61,7 +61,8 @@ public class FolderItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     /**
      * CheckBox跟踪
-     * @param position 第几个
+     *
+     * @param position  第几个
      * @param isChecked 是否选中
      */
     public void check(int position, boolean isChecked) {
@@ -80,8 +81,10 @@ public class FolderItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         lib.clear();
         checked = new boolean[books.size()];
     }
+
     /**
      * type用的
+     *
      * @param folder 文件夹
      * @return 只包含文件夹的一个book
      */
@@ -98,7 +101,7 @@ public class FolderItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void addToBookShelf() {
         for (int i = 0; i < checked.length; i++) {
             if (checked[i])
-                bookshelfAdapter.add(books.get(i));
+                list.add(books.get(i));
         }
         books.removeAll(books);
     }
@@ -184,9 +187,6 @@ public class FolderItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         books = new ArrayList<>();
     }
 
-    public void setBookshelfAdapter(BookshelfAdapter bookshelfAdapter) {
-        this.bookshelfAdapter = bookshelfAdapter;
-    }
 
     public int getItemCount() {
         return books == null ? 0 : books.size();

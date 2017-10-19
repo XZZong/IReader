@@ -1,6 +1,7 @@
 package com.github.brandonstack.ireader;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,6 +18,7 @@ import android.view.View;
 import com.github.brandonstack.ireader.activity.BaseView;
 import com.github.brandonstack.ireader.activity.ScanActivity;
 import com.github.brandonstack.ireader.adapter.BookshelfAdapter;
+import com.github.brandonstack.ireader.adapter.IndexSourceList;
 import com.github.brandonstack.ireader.adapter.SimpleShelfTouchHelperCallback;
 
 import butterknife.BindView;
@@ -58,7 +60,7 @@ public class MainActivity extends BaseView
 
         //移动
         ItemTouchHelper.Callback callback =
-                new SimpleShelfTouchHelperCallback(mAdapter);
+                new SimpleShelfTouchHelperCallback(IndexSourceList.getInstance());
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(mRecyclerView);
     }
