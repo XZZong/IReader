@@ -139,7 +139,7 @@ public class ScanActivity extends BaseView {
                 ((FolderItemAdapter) adapterFolder).addToBookShelf();
                 onBackPressed();
                 break;
-            case R.id.home:
+            case android.R.id.home:
                 onBackPressed();
                 break;
             default:
