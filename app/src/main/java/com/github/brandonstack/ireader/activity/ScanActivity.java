@@ -67,7 +67,7 @@ public class ScanActivity extends BaseView {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Content content = new Content(ScanActivity.this);
+                Content content = new Content(ScanActivity.this, ((FolderItemAdapter) adapterFolder));
                 content.queryFiles();
                 handler.sendEmptyMessage(READERFILES);
             }
@@ -79,8 +79,6 @@ public class ScanActivity extends BaseView {
         public void handleMessage(Message msg) {
             hideProgress();
             adapterFolder.notifyDataSetChanged();
-//            buttonCancle.setVisibility(View.VISIBLE);
-//            buttonOK.setVisibility(View.VISIBLE);
         }
     };
 

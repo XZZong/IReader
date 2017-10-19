@@ -16,10 +16,8 @@ import android.view.View;
 
 import com.github.brandonstack.ireader.activity.BaseView;
 import com.github.brandonstack.ireader.activity.ScanActivity;
-import com.github.brandonstack.ireader.adapter.BookShelfSourceList;
 import com.github.brandonstack.ireader.adapter.BookshelfAdapter;
 import com.github.brandonstack.ireader.adapter.SimpleShelfTouchHelperCallback;
-import com.github.brandonstack.ireader.entity.Book;
 
 import butterknife.BindView;
 
@@ -37,9 +35,8 @@ public class MainActivity extends BaseView
     @BindView(R.id.bookshelf)
     RecyclerView mRecyclerView;
     RecyclerView.LayoutManager mLayoutManager;
-    RecyclerView.Adapter mAdapter;
+    BookshelfAdapter mAdapter;
     ActionBarDrawerToggle toggle;
-    BookShelfSourceList bookShelfSourceList;
 
     @Override
     protected void initData() {
@@ -56,14 +53,12 @@ public class MainActivity extends BaseView
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
-        bookShelfSourceList = BookShelfSourceList.getInstance();
-        mAdapter = new BookshelfAdapter(bookShelfSourceList.getBooks(), MainActivity.this);
-        bookShelfSourceList.setAdapter(mAdapter);
+        mAdapter = new BookshelfAdapter(MainActivity.this);
         mRecyclerView.setAdapter(mAdapter);
 
         //移动
         ItemTouchHelper.Callback callback =
-                new SimpleShelfTouchHelperCallback(bookShelfSourceList);
+                new SimpleShelfTouchHelperCallback(mAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(mRecyclerView);
     }
@@ -151,11 +146,5 @@ public class MainActivity extends BaseView
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        bookShelfSourceList.refresh();
     }
 }

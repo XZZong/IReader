@@ -25,7 +25,6 @@ public class SimpleShelfTouchHelperCallback extends ItemTouchHelper.Callback {
                                 RecyclerView.ViewHolder viewHolder) {
         int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN
                 | ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT;
-        //不支持滑动
         int swipeFlags = 0;
         return makeMovementFlags(dragFlags, swipeFlags);
     }

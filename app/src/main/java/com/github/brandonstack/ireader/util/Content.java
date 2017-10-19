@@ -4,13 +4,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
+import android.support.v7.widget.RecyclerView;
 
-import com.github.brandonstack.ireader.adapter.FolderSourceList;
+import com.github.brandonstack.ireader.adapter.FolderItemAdapter;
 import com.github.brandonstack.ireader.entity.Book;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by 22693 on 2017/10/8.
@@ -21,15 +18,17 @@ public class Content {
 
     private Context context;
     //    List<Book> books;
-    private FolderSourceList sourceList;
+    private FolderItemAdapter adapter;
 
-    public Content(Context context) {
+
+    public Content(Context context, FolderItemAdapter adapter) {
         this.context = context;
+        this.adapter = adapter;
 //        books = new ArrayList<>();
     }
 
     public void queryFiles() {
-        sourceList = FolderSourceList.getInstance();
+
         String[] projection = new String[]{
                 MediaStore.Files.FileColumns.DATA
         };
@@ -62,12 +61,12 @@ public class Content {
                     book.setFolder(folder);
                     book.setPath(path);
                     book.setType(name.substring(dot + 1));
-                    sourceList.add(book);
+                    adapter.add(book);
 //                    books.add(book);
                 } while (cursor.moveToNext());
             }
             cursor.close();
         }
-        sourceList.convert();
+        adapter.convert();
     }
 }
