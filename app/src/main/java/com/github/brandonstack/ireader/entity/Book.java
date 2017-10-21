@@ -3,6 +3,7 @@ package com.github.brandonstack.ireader.entity;
 import org.litepal.crud.DataSupport;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by 22693 on 2017/10/6.
@@ -16,6 +17,15 @@ public class Book extends DataSupport implements Serializable {
     private String folder;
     private int order;
     private long begin;
+    private List<Long> pageBegin;
+
+    public List<Long> getPageBegin() {
+        return pageBegin;
+    }
+
+    public void setPageBegin(List<Long> pageBegin) {
+        this.pageBegin = pageBegin;
+    }
 
     public int getOrder() {
         return order;

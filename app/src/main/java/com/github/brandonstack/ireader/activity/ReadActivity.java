@@ -53,8 +53,12 @@ public class ReadActivity extends BaseView {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Intent intent = getIntent();
         book = (Book) intent.getSerializableExtra("book");
-        String show = page.getPageFromBegin(book);
+        String show = page.getPageFromBegin(book.getBegin(),book.getPath());
         textView.setText(show);
+
+        if (book.getPageBegin() == null) {
+            page.setPageBegin(book);
+        }
     }
 
     @Override

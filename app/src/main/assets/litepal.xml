@@ -1,6 +1,6 @@
 <litepal>
     <dbname value="reader"/>
-    <version value="5"/>
+    <version value="6"/>
     <list>
         <mapping class="com.github.brandonstack.ireader.entity.Book"></mapping>
     </list>
