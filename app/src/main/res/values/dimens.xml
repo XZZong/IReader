@@ -10,4 +10,6 @@
     
     <dimen name="readingMarginWidth">15dp</dimen>
     <dimen name="readingMarginHeight">30dp</dimen>
+    <!-- 设置行高 -->
+    <dimen name="setting_height">60dp</dimen>
 </resources>

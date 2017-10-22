@@ -14,6 +14,7 @@ import com.github.brandonstack.ireader.entity.Book;
 
 import org.litepal.crud.DataSupport;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,10 +26,6 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Created by admin on 2017/10/18.
- */
 
 public class Page {
     TextView textView;
@@ -82,43 +79,90 @@ public class Page {
         mPaint.setTypeface(textView.getTypeface());
     }
 
+    public static String codeString(File file) {
+        String code = null;
+        try {
+            BufferedInputStream bin = new BufferedInputStream(new FileInputStream(file));
+            int p = (bin.read() << 8) + bin.read();
+
+            switch (p) {
+                case 0xefbb:
+                    code = "UTF-8";
+                    break;
+                case 0xfffe:
+                    code = "Unicode";
+                    break;
+                case 0xfeff:
+                    code = "UTF-16BE";
+                    break;
+                default:
+                    code = "GBK";
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return code;
+    }
+
+    public void getBookLength(Book book){
+        File file = new File(book.getPath());
+        try {
+            String encode = codeString(file);
+            values.put("type",encode);
+            DataSupport.update(Book.class, values, book.getId());
+            InputStreamReader input = new InputStreamReader(new FileInputStream(file), encode);
+            while (true) {
+                char[] buf = new char[30000];
+                int result = input.read(buf);
+                if (result == -1) {
+                    input.close();
+                    break;
+                }
+                String bufString = new String(buf);
+                bufString = bufString.replaceAll("\r\n+\\s*", "\r\n\u3000\u3000");
+                bufString = bufString.replaceAll("\u0000", "");
+                buf = bufString.toCharArray();
+                fileLength += buf.length;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setPageBegin(Book book) {
         long begin = 0;
         String path = book.getPath();
         number = 0;
         List<Long> pageBegin = new ArrayList<>();
         pageBegin.add(begin);
-        while (begin + number < fileLength) {
+        while (begin < fileLength) {
             getPageFromBegin(begin,path);
             begin += number;
             pageBegin.add(begin);
         }
         mIsLastPage = false;
         book.setPageBegin(pageBegin);
-//        values.put("pageBegin",pageBegin);
-//        DataSupport.update(Book.class,values,book.getId());
     }
 
     public String getPageFromBegin(long begin, String path) {
-//        long begin = book.getBegin();
         if (begin <= 0) {
             mIsFirstPage = true;
             begin = 0;
         }
-//        File file = new File(book.getPath());
         File file = new File(path);
-        fileLength = file.length();
+//        fileLength = file.length() / 2;
         BufferedReader in = null;
         StringBuilder string = new StringBuilder("");
         try {
             int count = 0;
             number = 0;
-            in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "gbk"));
+            String encode = codeString(file);
+            in = new BufferedReader(new InputStreamReader(new FileInputStream(file), encode));
             if (begin > 1)
                 in.skip(begin - 1);
             float width = 0;
             StringBuilder sb = new StringBuilder("");
-            while (begin + number < file.length() && count < mLineCount) {
+            while (begin + number < fileLength && count < mLineCount) {
                 number++;
                 char c = (char)in.read();
                 float widthChar = mPaint.measureText(c + "");
@@ -153,7 +197,7 @@ public class Page {
                 }
             }
         }
-        if (begin + number >= file.length())
+        if (begin + number >= fileLength)
             mIsLastPage = true;
         return string.toString();
     }
@@ -166,95 +210,33 @@ public class Page {
         book.setBegin(preBegin);
         if (mIsLastPage)
             mIsLastPage = false;
-//        values.put("begin",book.getBegin());
-//        DataSupport.update(Book.class,values,book.getId());
+        values.put("begin", preBegin);
+        DataSupport.update(Book.class, values, book.getId());
         return getPageFromBegin(preBegin, book.getPath());
     }
-/*
-    public String getPrePage(Book book) {
-        long begin = book.getBegin() * 2;
-        StringBuilder string = new StringBuilder("");
-        try {
-            int count = 0;
-            while (count < mLineCount && begin > 0) {
-                byte[] buffer = readParagraphBack((int)begin, book);
-                String temp = new String(buffer, "gbk");
-                temp = temp.replace("\r\n","");
-                if (temp.length() == 0)
-                    continue;
-                begin -= buffer.length;
-                float width = 2 * mFontSize;
-                int countTemp = 0;
-                StringBuilder sb = new StringBuilder("");
-                for (char c:temp.toCharArray()) {
-                    float widthChar = mPaint.measureText(c + "");
-                    width += widthChar;
-                    if(width < mVisibleWidth) {
-                        sb.append(c);
-                    }
-                    else {
-                        countTemp++;
-                        sb.append('\n');
-                        sb.append(c);
-                        width = widthChar;
-                    }
-                }
-                string.insert(0,sb);
-                count += countTemp;
-            }
-            while (count > mLineCount) {
-                int index = string.indexOf("\n");
-                string.delete(0,index + 1);
-                count--;
-            }
-            return string.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
-    private byte[] readParagraphBack(int begin, Book book){
-        RandomAccessFile randomAccess = null;
-        try {
-            randomAccess = new RandomAccessFile(book.getPath(), "r");
-            MappedByteBuffer mapped = randomAccess.getChannel().map(FileChannel.MapMode.READ_ONLY,0, fileLength);
-            byte b0 ;
-            int i = begin - 1;
-            while(i > 0){
-                b0 = mapped.get(i);
-                if(b0 == 0x0a && i != begin - 1){
-                    i++;
-                    break;
-                }
-                i--;
-            }
-            int nParaSize = begin - i;
-            byte[] buf = new byte[nParaSize];
-            for (int j = 0; j < nParaSize; j++) {
-                buf[j] = mapped.get(i + j);
-            }
-//            mapped.clear();
-//            randomAccess.close();
-            return buf;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-*/
     public String getNextPage(Book book) {
         List<Long> list = book.getPageBegin();
         long begin = book.getBegin();
         int index = list.indexOf(begin);
         long nextBegin = list.get(index + 1);
         book.setBegin(nextBegin);
-//        values.put("begin",nextBegin);
-//        DataSupport.update(Book.class,values,book.getId());
+        values.put("begin",nextBegin);
+        DataSupport.update(Book.class,values,book.getId());
         return getPageFromBegin(nextBegin, book.getPath());
     }
 
+    public String getPage(Book book) {
+        values.put("begin",book.getBegin());
+        DataSupport.update(Book.class, values, book.getId());
+        return getPageFromBegin(book.getBegin(), book.getPath());
+    }
+
     public boolean ismIsLastPage() {
-        return mIsLastPage;
+        return this.mIsLastPage;
+    }
+
+    public long getFileLength() {
+        return fileLength;
     }
 }
